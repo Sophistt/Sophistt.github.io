@@ -1,0 +1,399 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kalman Filter | DeepSpace</title><meta name="keywords" content="??"><meta name="author" content="Carlos"><meta name="copyright" content="Carlos"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Kalman filter is a technology to achieve Bayes filter. It&#39;s an optimal linear state estimation method (eqauls to optimal linear filter under the minimum mean square error criterion), which seeks the s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kalman Filter">
+<meta property="og:url" content="http://sophistt.github.io/2019/07/24/kalman-filter/index.html">
+<meta property="og:site_name" content="DeepSpace">
+<meta property="og:description" content="Kalman filter is a technology to achieve Bayes filter. It&#39;s an optimal linear state estimation method (eqauls to optimal linear filter under the minimum mean square error criterion), which seeks the s">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/07/22/P87Ubj9eJYsLHqt.png">
+<meta property="article:published_time" content="2019-07-24T16:02:26.000Z">
+<meta property="article:modified_time" content="2021-03-03T08:27:46.807Z">
+<meta property="article:author" content="Carlos">
+<meta property="article:tag" content="??">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/07/22/P87Ubj9eJYsLHqt.png"><link rel="shortcut icon" href="/static/favicon.ico"><link rel="canonical" href="http://sophistt.github.io/2019/07/24/kalman-filter/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '4.2.1',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2021-03-03 08:27:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'true'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><link rel="stylesheet" href="/static/atom-one-light.css"><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/static/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">44</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">16</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">12</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-gamepad"></i><span> Entertainment</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/photos/"><i class="fa-fw fas fa-camera"></i><span> Photo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#principle"><span class="toc-number">1.</span> <span class="toc-text">Principle</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#prerequisite"><span class="toc-number">1.1.</span> <span class="toc-text">Prerequisite</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#problem-description"><span class="toc-number">1.2.</span> <span class="toc-text">Problem Description</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#example"><span class="toc-number">1.3.</span> <span class="toc-text">Example</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#algorithm"><span class="toc-number">2.</span> <span class="toc-text">Algorithm</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#prediction"><span class="toc-number">2.1.</span> <span class="toc-text">Prediction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#update"><span class="toc-number">2.2.</span> <span class="toc-text">Update</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#expansion"><span class="toc-number">3.</span> <span class="toc-text">Expansion</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#reality"><span class="toc-number">3.1.</span> <span class="toc-text">Reality</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#compute-jacobi-matrix"><span class="toc-number">3.2.</span> <span class="toc-text">Compute Jacobi Matrix</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#prediction-and-update"><span class="toc-number">3.3.</span> <span class="toc-text">Prediction and Update</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#codes"><span class="toc-number">4.</span> <span class="toc-text">Codes</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#references"><span class="toc-number">5.</span> <span class="toc-text">References</span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://i.loli.net/2020/07/22/P87Ubj9eJYsLHqt.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">DeepSpace</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-gamepad"></i><span> Entertainment</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/photos/"><i class="fa-fw fas fa-camera"></i><span> Photo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Kalman Filter</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2019-07-24T16:02:26.000Z" title="Created 2019-07-24 16:02:26">2019-07-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-03-03T08:27:46.807Z" title="Updated 2021-03-03 08:27:46">2021-03-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Study/">Study</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Study/Math/">Math</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">1.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>7min</span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p><strong>Kalman filter</strong> is a technology to achieve <em>Bayes filter</em>. It's an <strong>optimal linear state estimation method</strong> (eqauls to <strong>optimal linear filter under the minimum mean square error criterion</strong>), which seeks the state vector that best fits the observed data by mathematical methods.</p>
+<p>In localization and navigation of robots, kalman filter is the most commonly used method to estimante the robot's status, as it solve the problem recursively and only the estimation value in the last sampling period and the measurement in the current sampling period are needed, which saves memory and calculating time.</p>
+<h1 id="principle">Principle</h1>
+<h2 id="prerequisite">Prerequisite</h2>
+<p>Before using kalman filter, 3 prerequisites should be statisfied:</p>
+<ul>
+<li>State transition probability must be the linear function fo parameters with random Gaussian noise</li>
+<li>Measurement probabilty also has to contain Gaussian component</li>
+<li>Initial confidence is normally distributed</li>
+</ul>
+<h2 id="problem-description">Problem Description</h2>
+<p>Define a status vector with random-Gaussian-noise parameters:</p>
+<p><span class="math display">\[
+\begin{align*}
+  x_t  = A_tx_{t-1} + B_tu_t + \epsilon_t
+\end{align*}
+\]</span></p>
+<p>In this equation, <span class="math inline">\(x_t\)</span> and <span class="math inline">\(x_{t-1}\)</span> represents the status vector (<span class="math inline">\(n \times 1\)</span>) in moment <span class="math inline">\(t\)</span> and <span class="math inline">\(t-1\)</span> respectively; <span class="math inline">\(A\)</span> is the state transition matrix in <span class="math inline">\(n x n\)</span> dimension; <span class="math inline">\(u_t\)</span> represents the control vector (<span class="math inline">\(m \times 1\)</span>) on moment <span class="math inline">\(t\)</span>; <span class="math inline">\(B_t\)</span> is an optional gain matrix of control vector in <span class="math inline">\(n \times m\)</span> dimension; <span class="math inline">\(\epsilon_t\)</span> is a random Gaussian vector that represents the uncertainty introduced by status transition.</p>
+<p>Note: all vectors are column vectors in the following form:</p>
+<p><span class="math display">\[
+\begin{align*}
+  x_t =
+  \begin{bmatrix}
+  x_{1, t} \\ x_{2, t} \\ . \\ . \\ x_{n, t}
+  \end{bmatrix} \quad
+  and \quad 
+  u_t =
+  \begin{bmatrix}
+  u_{1, t} \\ u_{2, t} \\ . \\ . \\ u_{m, t}
+  \end{bmatrix}
+\end{align*}
+\]</span></p>
+<p>Define another observation vector (<span class="math inline">\(k * 1\)</span>):</p>
+<p><span class="math display">\[
+\begin{align*}
+  z_t  = H_tx_{t} + \delta_t
+\end{align*}
+\]</span></p>
+<p>In this equation, <span class="math inline">\(H_t\)</span> is the gain matrix in <span class="math inline">\(k * n\)</span> dimension; <span class="math inline">\(\delta_t\)</span> is the observation noise.</p>
+<h2 id="example">Example</h2>
+<p>Give an example to explain the above equations. Suppose that we are tracking a car in uniform motion through GPS and other sensors. In general, we would like to get information about its position and velocity (or orientation) when we observe a vehicle. Therefore, status vector could be defined as <span class="math inline">\(x_t = (x_t, y_t, v^x, v^y)^T\)</span>. Simultanenously, it's known that in uniform motion the control vector is <span class="math inline">\(u_t = (v^x, v^y)^T\)</span>.</p>
+<p>As a result, the matrix <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are defined as follow:</p>
+<p>$$ <span class="math display">\[\begin{align*}
+  A = 
+  \begin{bmatrix}
+  1 \quad 0 \quad 0 \quad 0 \\
+  0 \quad 1 \quad 0 \quad 0 \\
+  0 \quad 0 \quad 1 \quad 0 \\
+  0 \quad 0 \quad 0 \quad 1 \\
+  \end{bmatrix}
+  \quad and \quad
+  B = 
+  \begin{bmatrix}
+  dt \quad 0 \\
+  0 \quad dt \\
+  0 \quad 0 \\
+  0 \quad 0 \\
+  \end{bmatrix}
+
+\end{align*}\]</span> $$</p>
+<p>Finally, we can get the status equation:</p>
+<p><span class="math display">\[
+\begin{align*}
+  x_t  = A_tx_{t-1} + B_tu_t + \epsilon_t
+  \Rightarrow
+  \begin{bmatrix}
+  x_t \\ y_t \\ v^x \\ v^y
+  \end{bmatrix} =  
+  \begin{bmatrix}
+  1 \quad 0 \quad 0 \quad 0 \\
+  0 \quad 1 \quad 0 \quad 0 \\
+  0 \quad 0 \quad 1 \quad 0 \\
+  0 \quad 0 \quad 0 \quad 1 \\
+  \end{bmatrix}
+  \begin{bmatrix}
+  x_{t-1} \\ y_{t-1} \\ v^x \\ v^y
+  \end{bmatrix} +
+  \begin{bmatrix}
+  dt \quad 0 \\
+  0 \quad dt \\
+  0 \quad 0 \\
+  0 \quad 0 \\
+  \end{bmatrix}
+  \begin{bmatrix}
+  v^x \\ v^y
+  \end{bmatrix} + \epsilon_t = 
+  \begin{bmatrix}
+  x_{t-1} + v^x * dt \\ y_{t-1} + v^y * dt \\ v^x \\ v^y
+  \end{bmatrix} + \epsilon_t  
+\end{align*}
+\]</span></p>
+<p>Similarly, <span class="math inline">\(H\)</span> is also required to be defined. As we can get the information about vehicle's position from GPS sensor, the observation vector is defined as <span class="math inline">\(z_t = (x_t, y_t)^T\)</span>. <span class="math inline">\(H\)</span> is a <span class="math inline">\(k * n\)</span> dimensional matrix, so that we can get the equation as follow:</p>
+<p><span class="math display">\[
+\begin{align*}
+  z_t  = H_tx_{t} + \delta_t
+  \Rightarrow
+  \begin{bmatrix}
+  1 \quad 0 \quad 0 \quad 0 \\
+  0 \quad 1 \quad 0 \quad 0 \\
+  \end{bmatrix} 
+  \begin{bmatrix}
+  x_t \\ y_t \\ v^x \\ v^y
+  \end{bmatrix} + \delta_t =
+  \begin{bmatrix}
+  x_t \\ y_t 
+  \end{bmatrix} + \delta_t
+\end{align*}
+\]</span></p>
+<h1 id="algorithm">Algorithm</h1>
+<p>After defining <span class="math inline">\(x_t\)</span>, <span class="math inline">\(z_t\)</span>, <span class="math inline">\(A\)</span> and <span class="math inline">\(H\)</span>, we can use kalman fitler algorithm to estimate <span class="math inline">\(x_t\)</span>.</p>
+<h2 id="prediction">Prediction</h2>
+<p><span class="math display">\[
+\begin{align*}
+  \hat{x}^-_t = A\hat{x_{t-1}} + Bu_t \\
+  \hat{P}^-_t = A\hat{P_{t-1}}A^T + Q
+\end{align*}
+\]</span></p>
+<h2 id="update">Update</h2>
+<p><span class="math display">\[
+\begin{align*}
+  K_t = \frac{\hat{P}^-_tH^T}{H^T\hat{P}^-_tH^T + R} \\
+  \hat{x}_t = \hat{x}^-_t + K_t(z_t - H\hat{x}^-_t) \\
+  \hat{P}_t = (I - K_tH)\hat{P}^-_t
+\end{align*}
+\]</span></p>
+<p>Explanaiton of parameters in these equations:</p>
+<ul>
+<li><span class="math inline">\(\hat{x}^-_t\)</span>: the priori estimated value of status vector at moment <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(\hat{x}_t\)</span>: the posterior estimated value of status vector at moment <span class="math inline">\(t\)</span>, the result of kalman filter</li>
+<li><span class="math inline">\(\hat{x}_{t-1}\)</span>: the posterior estimated value of status vector at moment <span class="math inline">\(t-1\)</span></li>
+<li><span class="math inline">\(A\)</span>: status transition matrix</li>
+<li><span class="math inline">\(B\)</span>: an optional gain matrix of control vector</li>
+<li><span class="math inline">\(u_{t}\)</span>: control vector at moment <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(\hat{P}^-_t\)</span>: the priori estimated covariance at moment <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(\hat{P}_{t-1}\)</span>: the posterior estimated covariance at moment <span class="math inline">\(t\)</span>, a part of result of filter</li>
+<li><span class="math inline">\(K_t\)</span>: kalman gain coefficient, intermediate variable of equation</li>
+<li><font color="red"><span class="math inline">\(Q\)</span></font><font color="black">: covariance of process noise that represents the error between status transition matrix and actual process.It's difficult to seek the best value of <span class="math inline">\(Q\)</span>, but it follows some priciples: In general, <span class="math inline">\(Q\)</span> is diagonal matrix and the values are small for prompt convergence.</font></li>
+<li><font color="red"><span class="math inline">\(R\)</span></font><font color="black">: covariance of measured noise that relates to measured instruments, the smaller of this value, the higher of the convergence speed</font></li>
+</ul>
+<h1 id="expansion">Expansion</h1>
+<p>Unfortunately, <strong>kalman fitler</strong> only can be applied to problems with linear status transition matrix and measurement, which confine it in simple robotic problem. Therefore, <strong>Extended Kalman Filter</strong> is introduced to break the limitation.</p>
+<h2 id="reality">Reality</h2>
+<p>Essentially, the linear prediction and measurement in kalman filter are replaced by no-linear prediction and measurement in extended kalman filter. As the result, <span class="math inline">\(Ax_{t-1} + Bu_t\)</span> is replaced by Jacobi Matrix <span class="math inline">\(g(x_{t-1}, u_t)\)</span> and <span class="math inline">\(Hx_t\)</span> is replaced by Jacobi Matrix <span class="math inline">\(h(x_t)\)</span> .</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">KF</th>
+<th style="text-align: center;">EKF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(A\hat{x_{t-1}} + Bu_t\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(g(x_{t-1}, u_t)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(H\hat{x}^-_t\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(h(\hat{x}^-_t)\)</span></td>
+</tr>
+</tbody>
+</table>
+<h2 id="compute-jacobi-matrix">Compute Jacobi Matrix</h2>
+<p>Take the above vehicle as an example:</p>
+<p><span class="math display">\[
+\begin{align*}
+  J_{A} = 
+  \begin{bmatrix}
+  \frac{dx}{dx} \quad \frac{dx}{dy} \quad \frac{dx}{dv^x} \quad \frac{dx}{dv^y} \\
+  \frac{dy}{dx} \quad \frac{dy}{dy} \quad \frac{dy}{dv^x} \quad \frac{dy}{dv^y} \\
+  \frac{dv^x}{dx} \quad \frac{dv^x}{dy} \quad \frac{dv^x}{dv^x} \quad \frac{dv^x}{dv^y} \\
+  \frac{dv^y}{dx} \quad \frac{dv^y}{dy} \quad \frac{dv^y}{dv^x} \quad \frac{dv^y}{dv^y} 
+  \end{bmatrix} =
+  \begin{bmatrix}
+  1 \quad 0 \quad dt \quad 0 \\
+  0 \quad 1 \quad 0 \quad dt \\
+  0 \quad 0 \quad 1 \quad 0 \\
+  0 \quad 0 \quad 0 \quad 1 \\
+  \end{bmatrix}
+  \\ \\ 
+  J_{H} = 
+  \begin{bmatrix}
+  \frac{dx}{dx} \quad \frac{dx}{dy} \quad \frac{dx}{dv^x} \quad \frac{dx}{dv^y} \\
+  \frac{dy}{dx} \quad \frac{dy}{dy} \quad \frac{dy}{dv^x} \quad \frac{dy}{dv^y} \\
+  \end{bmatrix} =
+  \begin{bmatrix}
+  1 \quad 0 \quad 0 \quad 0 \\
+  0 \quad 1 \quad 0 \quad 0 \\
+  \end{bmatrix}
+\end{align*}
+\]</span></p>
+<h2 id="prediction-and-update">Prediction and Update</h2>
+<p><span class="math display">\[
+\begin{align*}
+  \hat{x}^-_t = g(x_{t-1}, u_t) \\
+  \hat{P}^-_t = A\hat{P_{t-1}}A^T + Q \\
+  K_t = \frac{\hat{P}^-_tH^T}{H^T\hat{P}^-_tH^T + R} \\
+  \hat{x}_t = \hat{x}^-_t + K_t(z_t - h(\hat{x}^-_t)) \\
+  \hat{P}_t = (I - K_tH)\hat{P}^-_t
+\end{align*}
+\]</span></p>
+<h1 id="codes">Codes</h1>
+<ul>
+<li><a href="https://github.com/Sophistt/Small_Projects/blob/master/kalman_filter/kalman_filter.py" target="_blank" rel="noopener">kalman_filter.py</a></li>
+</ul>
+<h1 id="references">References</h1>
+<ul>
+<li><a href="http://www.probabilistic-robotics.org/" target="_blank" rel="noopener">Probabilistic Robotics</a></li>
+<li><a href="https://blog.csdn.net/u013453604/article/details/50301477" target="_blank" rel="noopener">卡尔曼滤波的理解以及参数调整</a></li>
+</ul>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Carlos</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://sophistt.github.io/2019/07/24/kalman-filter/">http://sophistt.github.io/2019/07/24/kalman-filter/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/07/22/P87Ubj9eJYsLHqt.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2019/07/26/how-to-use-bibtex-and-latex-in-sublime-text/"><img class="prev-cover" data-lazy-src="https://i.loli.net/2020/07/18/xVyet3HZOTaElBi.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">How to Use Bibtex and Latex in Sublime Text</div></div></a></div><div class="next-post pull-right"><a href="/2019/07/17/bash-scripts-exploration/"><img class="next-cover" data-lazy-src="https://i.loli.net/2020/07/22/eRfMwotuyhWCAxH.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Bash Scripts Exploration</div></div></a></div></nav></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Carlos</div><div class="framework-info"><span>Framework </span><a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  var script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div></div></body></html>

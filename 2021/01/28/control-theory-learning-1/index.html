@@ -1,0 +1,248 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fundamental Concepts (Control Theory Learning 1) | DeepSpace</title><meta name="keywords" content="Control Theory"><meta name="author" content="Carlos"><meta name="copyright" content="Carlos"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Fundamental Concepts State Space Model Given a system, we have various methods to define its properties, including State Space Model, Transfer function, Odinary differential equations and etc. Differe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fundamental Concepts (Control Theory Learning 1)">
+<meta property="og:url" content="http://sophistt.github.io/2021/01/28/control-theory-learning-1/index.html">
+<meta property="og:site_name" content="DeepSpace">
+<meta property="og:description" content="Fundamental Concepts State Space Model Given a system, we have various methods to define its properties, including State Space Model, Transfer function, Odinary differential equations and etc. Differe">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/07/18/31FN46cDIOujAfz.png">
+<meta property="article:published_time" content="2021-01-28T13:50:50.000Z">
+<meta property="article:modified_time" content="2021-03-03T08:27:46.807Z">
+<meta property="article:author" content="Carlos">
+<meta property="article:tag" content="Control Theory">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/07/18/31FN46cDIOujAfz.png"><link rel="shortcut icon" href="/static/favicon.ico"><link rel="canonical" href="http://sophistt.github.io/2021/01/28/control-theory-learning-1/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '4.2.1',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2021-03-03 08:27:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'true'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><link rel="stylesheet" href="/static/atom-one-light.css"><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/static/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">44</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">16</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">12</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-gamepad"></i><span> Entertainment</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/photos/"><i class="fa-fw fas fa-camera"></i><span> Photo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fundamental-concepts"><span class="toc-number">1.</span> <span class="toc-text">Fundamental Concepts</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#state-space-model"><span class="toc-number">1.1.</span> <span class="toc-text">State Space Model</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#example"><span class="toc-number">1.1.1.</span> <span class="toc-text">Example</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#response-of-the-system"><span class="toc-number">1.2.</span> <span class="toc-text">Response of the system</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#impulse-reponse"><span class="toc-number">1.2.1.</span> <span class="toc-text">Impulse reponse</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#a-simple-method-to-compute-eat"><span class="toc-number">1.2.2.</span> <span class="toc-text">A simple method to compute \(e^{At}\)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#canonical-form"><span class="toc-number">1.3.</span> <span class="toc-text">Canonical Form</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://i.loli.net/2020/07/18/31FN46cDIOujAfz.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">DeepSpace</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-gamepad"></i><span> Entertainment</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/photos/"><i class="fa-fw fas fa-camera"></i><span> Photo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Fundamental Concepts (Control Theory Learning 1)</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-01-28T13:50:50.000Z" title="Created 2021-01-28 13:50:50">2021-01-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-03-03T08:27:46.807Z" title="Updated 2021-03-03 08:27:46">2021-03-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Study/">Study</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">503</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>3min</span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="fundamental-concepts">Fundamental Concepts</h1>
+<h2 id="state-space-model">State Space Model</h2>
+<p>Given a system, we have various methods to define its properties, including <strong>State Space Model</strong>, <strong>Transfer function</strong>, <strong>Odinary differential equations</strong> and etc. Different description methods can be interchanged.</p>
+<h3 id="example">Example</h3>
+<p>Given a CT(<em>Continuous-time</em>) or DT(<em>Discrete-time</em>) system,</p>
+<p><span class="math display">\[
+\begin{split}
+&amp;\dot{x}(t) = Ax(t) + Bu(t) \quad| \quad x(t+1) &amp;= Ax(t)+Bu(t) \\
+&amp; y(t) = Cx(t) + Du(t)   \quad |\quad \quad \quad y(t)&amp; = Cx(t)+Du(t)
+\end{split}
+\]</span></p>
+<p>Their transfer functions are, <span class="math display">\[
+\begin{split}
+G(s) &amp; = C(sI-A)^{-1}B+D, \quad \mathbb{Laplace} \\
+G(z) &amp; = C(zI-A)^{-1}B+D, \quad \mathbb{z-transfrom}
+\end{split}
+\]</span> Notice that transfer fucntion descirbes properties of the sytem in frequency domain.</p>
+<p>Details about state space model could be seen at this link: <a href="https://sophistt.github.io/2020/11/08/state-space-model/">State Space Model</a></p>
+<h2 id="response-of-the-system">Response of the system</h2>
+<p>Now we connect the system with their response in time domain. Given a sytem in state space model with their inital condition <span class="math inline">\(x_0\)</span> and input <span class="math inline">\(u(t)\)</span>. Their <strong>general response</strong> satisfy the following equations <span class="math display">\[
+\begin{split}
+y(t) &amp; = Ce^{At}x_0 + \int_0^tCe^{A(t-\tau)}Bu(\tau)d\tau+Du(\tau) \quad \mathbb{(CT)}\\
+y(t) &amp; = Ce^{At}x_0 + \Sigma_{i=0}^{t-1}CA^{t-1-i}Bu(i)+Du(t) \quad \mathbb{(DT)}
+\end{split}
+\]</span></p>
+<h3 id="impulse-reponse">Impulse reponse</h3>
+<p>Impulse reponse generally refers to the output of the system when the input is a unit pulse function. In other words, the initial condition of the sytem <span class="math inline">\(x_0=0\)</span> and input <span class="math inline">\(u(t)=\delta(t)\)</span>. <span class="math display">\[
+y(t) = Ce^{At}B+D\delta(t) \quad | \quad y(t)=CA^{t-1}B
+\]</span></p>
+<h3 id="a-simple-method-to-compute-eat">A simple method to compute <span class="math inline">\(e^{At}\)</span></h3>
+<p>Given a state space model, if we would like to know its response in time domain. It's needed to calculate <span class="math inline">\(e^{At}\)</span>. A simple method to calculate is computing <span class="math inline">\((sI-A)^{-1}\)</span> or <span class="math inline">\(z(zI-A)^{-1}\)</span> then use inverse Laplace or Z-transform.</p>
+<h2 id="canonical-form">Canonical Form</h2>
+<p>Given a transfer function <span class="math inline">\(G(s)\)</span>, we can use Canonical Form to derive its state space model. <span class="math display">\[
+\begin{split}
+G(s) &amp; = \frac{b_0s^n+b_1s^{n-1}+...+b_{n-1}s+b_n}{s^n+a_1s^{n-1}+...+a_{n-1}s+a_n} \\
+&amp; = b_0 + \frac{c_1s^{n-1}+...+c_{n-1}s+c_n}{s^n+a_1s^{n-1}+...+a_{n-1}s+a_n}
+\end{split}
+\]</span> with <span class="math inline">\(c_i=b_i-b_0a_i, i= 1, 2,..., n\)</span></p>
+<p>Then we can get the controllability Canonical Form <span class="math display">\[
+\begin{split}
+A &amp;=
+\begin{bmatrix}
+0 &amp; 1 &amp; 0 &amp; ... &amp; 0\\
+0 &amp; 0 &amp; 1 &amp; ... &amp; 0 \\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots \\
+0 &amp; 0 &amp; 0 &amp; ... &amp; 1 \\
+-a_n &amp; -a_{n-1} &amp; -a_{n-2} &amp; ... &amp; -a_1
+\end{bmatrix} \quad
+&amp;B=
+\begin{bmatrix}
+0 \\ 0 \\ \vdots \\ 0 \\ 1
+\end{bmatrix} \\
+C &amp;= \begin{bmatrix}
+c_n  &amp; c_{n-1} &amp; ... &amp; c_2 &amp; c_1
+\end{bmatrix} \quad
+&amp;D  = [b_0]
+\end{split}
+\]</span></p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Carlos</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://sophistt.github.io/2021/01/28/control-theory-learning-1/">http://sophistt.github.io/2021/01/28/control-theory-learning-1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Control-Theory/">Control Theory</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/07/18/31FN46cDIOujAfz.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/01/28/controllability/"><img class="prev-cover" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Controllability (Control Theory Learning 4)</div></div></a></div><div class="next-post pull-right"><a href="/2020/11/08/state-space-model/"><img class="next-cover" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">State Space Model</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/01/28/observability/" title="Observability (Control Theory Learning 5)"><img class="cover" data-lazy-src="https://i.loli.net/2020/07/22/eRfMwotuyhWCAxH.png"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-28</div><div class="title">Observability (Control Theory Learning 5)</div></div></a></div><div><a href="/2021/01/28/stability/" title="Stability (Control Theory Learning 3)"><img class="cover" data-lazy-src="https://i.loli.net/2020/07/22/P87Ubj9eJYsLHqt.png"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-28</div><div class="title">Stability (Control Theory Learning 3)</div></div></a></div><div><a href="/2021/01/28/stabilizability/" title="Stabilizability (Control Theory Learning 6)"><img class="cover" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-28</div><div class="title">Stabilizability (Control Theory Learning 6)</div></div></a></div><div><a href="/2021/01/28/similar-matrix-and-jordan-form/" title="Similar Matrix and Jordan Form (Control Theory Learning 2)"><img class="cover" data-lazy-src="https://i.loli.net/2020/07/18/nargHlvmL9ftBQe.png"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-01-28</div><div class="title">Similar Matrix and Jordan Form (Control Theory Learning 2)</div></div></a></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Carlos</div><div class="framework-info"><span>Framework </span><a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  var script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div></div></body></html>

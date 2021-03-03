@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Configuration of SNOPT | DeepSpace</title><meta name="keywords" content="Optimization"><meta name="author" content="Carlos"><meta name="copyright" content="Carlos"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="SNOPT (Sparse Nonlinear OPTimizer) is a general-purpose system for constrained optimization, which requires a license to be executed. It minimizes a linear or nonlinear function subject to bounds on t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Configuration of SNOPT">
+<meta property="og:url" content="http://sophistt.github.io/2020/04/22/configuration-of-snopt/index.html">
+<meta property="og:site_name" content="DeepSpace">
+<meta property="og:description" content="SNOPT (Sparse Nonlinear OPTimizer) is a general-purpose system for constrained optimization, which requires a license to be executed. It minimizes a linear or nonlinear function subject to bounds on t">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/07/18/xVyet3HZOTaElBi.png">
+<meta property="article:published_time" content="2020-04-22T11:53:19.000Z">
+<meta property="article:modified_time" content="2021-03-03T08:27:46.807Z">
+<meta property="article:author" content="Carlos">
+<meta property="article:tag" content="Optimization">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/07/18/xVyet3HZOTaElBi.png"><link rel="shortcut icon" href="/static/favicon.ico"><link rel="canonical" href="http://sophistt.github.io/2020/04/22/configuration-of-snopt/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '4.2.1',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2021-03-03 08:27:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'true'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><link rel="stylesheet" href="/static/atom-one-light.css"><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/static/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">44</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">16</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">12</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-gamepad"></i><span> Entertainment</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/photos/"><i class="fa-fw fas fa-camera"></i><span> Photo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#simple-tutorial-in-2d"><span class="toc-number">1.</span> <span class="toc-text">Simple Tutorial in 2D</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#apply-the-license"><span class="toc-number">1.1.</span> <span class="toc-text">Apply the license</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#donwload-libraries"><span class="toc-number">1.2.</span> <span class="toc-text">Donwload libraries</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#step-by-step-tutorial"><span class="toc-number">2.</span> <span class="toc-text">Step by Step Tutorial</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#references"><span class="toc-number">3.</span> <span class="toc-text">References</span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://i.loli.net/2020/07/18/xVyet3HZOTaElBi.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">DeepSpace</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-gamepad"></i><span> Entertainment</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/photos/"><i class="fa-fw fas fa-camera"></i><span> Photo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Configuration of SNOPT</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-04-22T11:53:19.000Z" title="Created 2020-04-22 11:53:19">2020-04-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-03-03T08:27:46.807Z" title="Updated 2021-03-03 08:27:46">2021-03-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Programming/">Programming</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">523</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>3min</span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>SNOPT (<strong>S</strong>parse <strong>N</strong>onlinear <strong>OPT</strong>imizer) is a general-purpose system for constrained optimization, which requires a license to be executed. It minimizes a linear or nonlinear function subject to bounds on the variables and sparse linear or nonlinear constraints. It is suitable for large-scale linear and quadratic programming and for linearly constrained optimization, as well as for general nonlinear programs.</p>
+<h1 id="simple-tutorial-in-2d">Simple Tutorial in 2D</h1>
+<h2 id="apply-the-license">Apply the license</h2>
+<p>UCSD offers evaluations versions (for 3 months) of optimization libraries <strong>SNOPT7</strong> and <strong>SQOPT7</strong> for macOS, Windows and Linux systems. <a href="https://ccom.ucsd.edu/~optimizers/downloads/#" target="_blank" rel="noopener">Click here</a> to apply the license.</p>
+<h2 id="donwload-libraries">Donwload libraries</h2>
+<p>After receiving the email from USCD, we can click the link approached to the email to download the libraries in different versions. As I would like to use the C++ version, <code>libsnopt7_cpp.so</code> has to be downloaded. Besides, the C++ interface is compiled from the <a href="https://github.com/snopt/snopt-interface" target="_blank" rel="noopener">snopt-interface github repository</a>. For Linux and MacOS, a C++ compiler must be used to link programs to the libraries above. For example, if we would like to compile and execute a C++ example named <code>myProb.cpp</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt;&gt; g++ -O -I<span class="hljs-variable">$SNOPT</span>/include -c myProb.cpp -o myProb.o<br>&gt;&gt; g++ -O myProb.o -o myProb -L<span class="hljs-variable">$SNOPT</span>/lib -lsnopt_cpp<br></code></pre></td></tr></table></figure>
+<h1 id="step-by-step-tutorial">Step by Step Tutorial</h1>
+<p>Actually, as for a beginner, we need to do some extra works to compile and execute the program successfully. Here I will provide a step-by-step tutorial to install and configure the <strong>SNOPT</strong>: 1. Apply the license. 2. Download <a href="https://github.com/snopt/snopt-interface" target="_blank" rel="noopener">snopt-interface github repository</a> and extract in the <code>$HOME</code> folder. Then we can rename the folder to <strong>SNOPT</strong>. 3. Enter to the folder and create folders named <strong>lib</strong> and <strong>lic</strong> in it. <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt;&gt; <span class="hljs-built_in">cd</span> SNOPT<br>&gt;&gt; mkdir lib lic<br></code></pre></td></tr></table></figure> 4. Download the license approached to the UCSD email and move it to the <strong>lic</strong> folder. 5. Download the library <code>libsnopt7_cpp.so</code> in Linux version from the links approached to the UCSD email and move it into the <strong>lib</strong> folder. 6. Edit the <code>~/.bashrc</code> file as follow: <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt;&gt; <span class="hljs-built_in">export</span> SNOPT_LICENSE=<span class="hljs-variable">$HOME</span>/SNOPT/lic/snopt7.lic<br>&gt;&gt; <span class="hljs-built_in">export</span> LD_LIBRARY_PATH=<span class="hljs-variable">$HOME</span>/SNOPT/lib<br>&gt;&gt; <span class="hljs-built_in">export</span> SNOPT=<span class="hljs-variable">$HOME</span>/SNOPT<br></code></pre></td></tr></table></figure> 7. Test if we configure the environment successfully by compiling and executing the routines in <strong>cppexamples</strong> folder. <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt;&gt; <span class="hljs-built_in">cd</span> SNOPT/cppexamples<br>&gt;&gt; g++ -O -I<span class="hljs-variable">$SNOPT</span>/include -c sntoya.cpp -o sntoya.o<br>&gt;&gt; g++ -O sntoya.o -o sntoya -L<span class="hljs-variable">$SNOPT</span>/lib -lsnopt7_cpp<br></code></pre></td></tr></table></figure></p>
+{% note info %}
+  If utilizing shared libraries `.dylib/.so`, the location of the library files must be added to `LD_LIBRARY_PATH` on Linux.
+  If the error `libgfortran.so.4` required occurs, it means that gcc-7 and gfortran7 are required to be installed to meet the dependencies.
+{% endnote %}
+<ul>
+<li>Install gfortran7 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt;&gt; sudo add-apt-repository ppa:jonathonf/gcc-7.1<br>&gt;&gt; sudo apt-get update<br>&gt;&gt; sudo apt-get install gcc-7 g++-7 gfortran-7<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>In the end, after compiling the linking the <code>sntoya.cpp</code>, we get an executable file <code>sntoya</code>. If no error throws while we execute it, it means the we configure <strong>SNOPT</strong> successfully.</p>
+<h1 id="references">References</h1>
+<ul>
+<li><a href="https://ccom.ucsd.edu/~optimizers/docs/snopt/index.html" target="_blank" rel="noopener">SNOPT7 Reference Guide</a></li>
+<li><a href="https://web.stanford.edu/group/SOL/snopt.htm" target="_blank" rel="noopener">User guide for SNOPT7</a></li>
+</ul>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Carlos</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://sophistt.github.io/2020/04/22/configuration-of-snopt/">http://sophistt.github.io/2020/04/22/configuration-of-snopt/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Optimization/">Optimization</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/07/18/xVyet3HZOTaElBi.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/04/26/ros-services/"><img class="prev-cover" data-lazy-src="https://i.loli.net/2020/07/18/31FN46cDIOujAfz.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">ROS Services</div></div></a></div><div class="next-post pull-right"><a href="/2020/01/04/smart-pointer/"><img class="next-cover" data-lazy-src="https://i.loli.net/2020/07/22/eRfMwotuyhWCAxH.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Smart Pointer in C++</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2020/05/08/use-snopt-as-ros-service/" title="Use SNOPT as A ROS Service"><img class="cover" data-lazy-src="https://i.loli.net/2020/07/18/31FN46cDIOujAfz.png"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-05-08</div><div class="title">Use SNOPT as A ROS Service</div></div></a></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Carlos</div><div class="framework-info"><span>Framework </span><a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div></div></body></html>

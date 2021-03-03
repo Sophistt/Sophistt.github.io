@@ -1,0 +1,338 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Linear-Quadratic-Regulator(LQR) Controller | DeepSpace</title><meta name="keywords" content="??"><meta name="author" content="Carlos"><meta name="copyright" content="Carlos"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="The theory of optimal control is concerned with operating a dynamic system at minimum cost. The case where the system dynamics are described by a set of linear differential equations and the cost is d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linear-Quadratic-Regulator(LQR) Controller">
+<meta property="og:url" content="http://sophistt.github.io/2020/05/02/lqr-controller-theory/index.html">
+<meta property="og:site_name" content="DeepSpace">
+<meta property="og:description" content="The theory of optimal control is concerned with operating a dynamic system at minimum cost. The case where the system dynamics are described by a set of linear differential equations and the cost is d">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/07/18/nargHlvmL9ftBQe.png">
+<meta property="article:published_time" content="2020-05-02T12:00:16.000Z">
+<meta property="article:modified_time" content="2021-03-03T08:27:46.807Z">
+<meta property="article:author" content="Carlos">
+<meta property="article:tag" content="??">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/07/18/nargHlvmL9ftBQe.png"><link rel="shortcut icon" href="/static/favicon.ico"><link rel="canonical" href="http://sophistt.github.io/2020/05/02/lqr-controller-theory/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '4.2.1',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2021-03-03 08:27:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'true'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><link rel="stylesheet" href="/static/atom-one-light.css"><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/static/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">44</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">16</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">12</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-gamepad"></i><span> Entertainment</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/photos/"><i class="fa-fw fas fa-camera"></i><span> Photo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#general-description"><span class="toc-number">1.</span> <span class="toc-text">General Description</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#method"><span class="toc-number">1.1.</span> <span class="toc-text">Method</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#goal"><span class="toc-number">1.2.</span> <span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#solution"><span class="toc-number">1.3.</span> <span class="toc-text">Solution</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#conclusion"><span class="toc-number">1.4.</span> <span class="toc-text">Conclusion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#application"><span class="toc-number">1.5.</span> <span class="toc-text">Application</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bonus"><span class="toc-number">2.</span> <span class="toc-text">Bonus</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#example"><span class="toc-number">2.1.</span> <span class="toc-text">Example</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dynamic-analysis"><span class="toc-number">2.2.</span> <span class="toc-text">Dynamic analysis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#discretization"><span class="toc-number">2.3.</span> <span class="toc-text">Discretization</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#references"><span class="toc-number">3.</span> <span class="toc-text">References</span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://i.loli.net/2020/07/18/nargHlvmL9ftBQe.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">DeepSpace</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-gamepad"></i><span> Entertainment</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/photos/"><i class="fa-fw fas fa-camera"></i><span> Photo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Linear-Quadratic-Regulator(LQR) Controller</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-05-02T12:00:16.000Z" title="Created 2020-05-02 12:00:16">2020-05-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-03-03T08:27:46.807Z" title="Updated 2021-03-03 08:27:46">2021-03-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Study/">Study</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Study/Control-Theory/">Control Theory</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>9min</span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>The theory of <strong>optimal control</strong> is concerned with <strong>operating a dynamic system at minimum cost</strong>. The case where the system dynamics are described by a set of linear differential equations and the cost is described by a quadratic function is called the LQ problem. One of the main results in the theory is that the solution is provided by the <strong>linear–quadratic regulator (LQR)</strong>, a feedback controller whose equations are given below.</p>
+<h1 id="general-description">General Description</h1>
+<div class="note info flat"><p><strong>From Wikipedia</strong> The settings of a (regulating) controller governing either a machine or process (like an airplane or chemical reactor) are found by using a mathematical algorithm that minimizes a cost function with weighting factors supplied by a human (engineer). The <strong>cost function is often defined as a sum of the deviations of key measurements, like altitude or process temperature, from their desired values.</strong> The algorithm thus finds those controller settings that minimize undesired deviations. The <strong>magnitude of the control action itself may also be included in the cost function.</strong> The LQR algorithm <font color="green">reduces the amount of work</font> done by the control systems engineer to optimize the controller. However, <strong>the engineer still needs to specify the cost function parameters, and compare the results with the specified design goals.</strong> Often this means that controller construction will be an iterative process in which the engineer judges the "optimal" controllers produced through simulation and then adjusts the parameters to produce a controller more consistent with design goals. The <strong>LQR algorithm is essentially an automated way of finding an appropriate state-feedback controller.</strong> As such, it is not uncommon for control engineers to prefer alternative methods, like full state feedback, also known as pole placement, in which there is a clearer relationship between controller parameters and controller behavior. <font color="red">Difficulty in finding the right weighting factors limits the application of the LQR based controller synthesis.</font></p>
+</div>
+<h2 id="method">Method</h2>
+<p>Here only <strong>finite-horizon, discrete-time LQR problem</strong> will be discussed</p>
+<h2 id="goal">Goal</h2>
+<p>In this problem, the discrete-time linear system described by:</p>
+<p><span class="math display">\[
+x_{k+1} = Ax_k + Bu_k
+\]</span></p>
+<p>Its performance could be defined by the following cost function:</p>
+<p><span class="math display">\[
+J = {\sum}^T_{t=1}(x^T_tQx_t + u^T_tRu_t + 2x^T_tNu_k)
+\]</span></p>
+<p><em>This equation could be simplified by removing the last Gaussian Coefficient.:</em></p>
+<p><span class="math display">\[
+J = {\sum}^T_{t=1}(x^T_tQx_t + u^T_tRu_t)
+\]</span></p>
+<h2 id="solution">Solution</h2>
+<p>But how to minimize the cost function <span class="math inline">\(J\)</span>? Algebraic Riccati equation provides a common method to resolve this problem, which is named <strong>DARE</strong> in discrete-time problem.</p>
+<p>From terminal condition <span class="math inline">\(P_T=Q, P_t\)</span> is found iteratively backwards in time by the dynamic Riccati equation:</p>
+<p><span class="math display">\[
+P_{t−1}=A^TP_tA − A^TP_tB(B^TP_tB+R)^{−1} B^T P_t A+Q
+\]</span></p>
+<p>The steady-state characterization of <span class="math inline">\(P\)</span>, relevant for the infinite-horizon problem in which <span class="math inline">\(T\)</span> goes to infinity, can be found by iterating the dynamic equation repeatedly until it converges; then <span class="math inline">\(P\)</span> is characterized by removing the time subscripts from the dynamic equation.</p>
+<p>The optimal control sequence minimizing the performance index is given by:</p>
+<p><span class="math display">\[
+u_t^∗=−Kx_{t−1}
+\]</span></p>
+<p>Where:</p>
+<p><span class="math display">\[
+K=(R+B^T PB)^{−1} B^T PA
+\]</span></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Therefore, the whole process of LQR algorithm could be concluded as, 1. Set <span class="math inline">\(P_t\)</span> equal to <span class="math inline">\(Q\)</span> 2. Iterate <span class="math inline">\(P_t\)</span> through Algebraic Riccati equation 3. Terminate iteration of <span class="math inline">\(P\)</span> while <span class="math inline">\(P_{t−1} −P_t\)</span> is small enough and calculate feedback matrix <span class="math inline">\(K\)</span> 4. Calculate the optimal control signal <span class="math inline">\(u^∗\)</span> through <span class="math inline">\(K\)</span></p>
+<h2 id="application">Application</h2>
+<p><a href="https://zhuanlan.zhihu.com/p/72702387" target="_blank" rel="noopener">Analysis of Apollo control algorithm</a> In the field of autonomous driving, how to track the planning path well is a really core problem. Geometry algorithm such as <strong>Pure Pursuit Algorithm, Stanley Algorithm</strong> is only suitable for low-speed and simple conditions. In city working condition, modern advanced control theories such as <strong>Model Predictive Control</strong> and <strong>Linear-Quadratic Regulator control</strong> are more appropriate in these conditions.</p>
+<p>Here we will discuss how to use LQR Algorithm to track the planning trajectory of self-driving vehicles.</p>
+<div data-align="center">
+<p><img src= "/img/loading.gif" data-lazy-src="https://i.imgur.com/bcIh4nV.png" width="20%" alt="Path Tracking"/><br></p>
+</div>
+<p>If the state <span class="math inline">\(x=[s, \dot{s}, \theta, \dot{\theta}]\)</span> of the self-driving vehicle and the planned trajectory (black points) is known, the state of the vehicle in the soon future (showed as the red points) could be calculated through a sequence fo given control signals u according to the state model <span class="math inline">\(x_{t+1}=Ax_t+Bu_t.\)</span></p>
+<p>We can use a quadratic cost function to evaluate the performance of the vehicle as followed,</p>
+<p><span class="math display">\[
+J = \sum_{t=1}^T((x_t - x_t^*)^TQ(x_t-x_t^*) + u^T_tRu_t)
+\]</span></p>
+<p>Where <span class="math inline">\(x_t^∗\)</span> represents the sequences of desired states in planned trajectory and <span class="math inline">\(x_t\)</span> represents the predicted points. We can minimize this objective by linearizing the dynamics around the target trajectory and applying LQR algorithm to the resulting linearized system. This optimization is done in an online fashion, each time a new control command will be calculated and sent to controller of the vehicle.</p>
+<p>However, in the condition without considering the rate of vehicle's heading angle, the <strong>lateral deviation</strong> <span class="math inline">\(e\)</span> and <strong>heading deviation</strong> <span class="math inline">\(θ_e\)</span> are relevant to the curvature of the road. LQR algorithm can leads the system to the stable state, but it cannot eliminate the steady-state error from the curvature of the road. Therefore, <strong>a feedforward control signal</strong> <span class="math inline">\(δ_{ff}\)</span> is introduced to suppress the steady-state error. In simplified cases, <span class="math inline">\(δ_{ff}=arctan⁡(L ∗k)\)</span>, where <span class="math inline">\(L\)</span> is wheel base of the vehicle and k is the curvature of the road.</p>
+<p>Therefore,</p>
+<p><span class="math display">\[
+δ=δ_{fb}+δ_{ff}=−Kx_{t−1}+arctan⁡(L ∗k)
+\]</span></p>
+<h1 id="bonus">Bonus</h1>
+<p>But how to define the suitable matrices A, B, Q, R in different systems? The following gives detailed steps to define these matrices as an example. (from Apollo)</p>
+<h2 id="example">Example</h2>
+<p>In autonomous driving, LQR Controller can be used for lateral steering wheel control. Therefore, dynamic analysis is required to build a vehicle dynamic model.</p>
+<h2 id="dynamic-analysis">Dynamic analysis</h2>
+<p>Firstly, we should analyze the forces of vehicles.</p>
+<div data-align="center">
+<p><img src= "/img/loading.gif" data-lazy-src="https://i.imgur.com/mlCMAbP.png" width="60%" alt="Vehicle Dynamics"/><br></p>
+</div>
+<p>As for lateral steering wheel control, we should pay more attention on <strong>lateral forces</strong>.</p>
+<p>Analyze the forces on the front and read wheels of the vehicle,</p>
+<p><span class="math display">\[
+ma_y=F_{yf}+F_{yr}    (1)
+\]</span></p>
+<p>According to momenta balance of the vehicle,</p>
+<p><span class="math display">\[
+I_z ψ ̈=l_f F_{yf}−l_r F_{yr}   (2)
+\]</span></p>
+<p>In equations (1), (2), the car quality <span class="math inline">\(m\)</span>, monenta of inertia <span class="math inline">\(I_z\)</span>, distance from front or rear axle to center <span class="math inline">\(l_f\)</span>, <span class="math inline">\(l_r\)</span> are measurable. To resolve the equations, lateral acceleration <span class="math inline">\(a_y\)</span> and lateral forces <span class="math inline">\(F_{yf}\)</span>, <span class="math inline">\(F_{yr}\)</span> are needed.</p>
+<p>Lateral acceleration <span class="math inline">\(a_y\)</span> can be decomposed into acceleration caused by lateral displacement and centripetal acceleration.</p>
+<p><span class="math display">\[
+a_y=y ̈+V_x ψ ̇   (3)
+\]</span></p>
+<p>Where <span class="math inline">\(y\)</span> is lateral displacement, <span class="math inline">\(ψ\)</span> is heading angle and <span class="math inline">\(V_x\)</span> is longitudinal speed.</p>
+<p>Lateral forces <span class="math inline">\(F_{yf}\)</span> and <span class="math inline">\(F_{yr}\)</span> can be deduced by the below equations,</p>
+<p><span class="math display">\[
+F_{yf}=2C_{af} (δ−θ_{Vf} )  (4) \\
+F_{yr}=2C_{ar} (−θ_{Vr})   (5)
+\]</span></p>
+<p>Where <span class="math inline">\(C_{af}\)</span> and <span class="math inline">\(C_{ar}\)</span> are <strong>lateral stiffness</strong> of front and rear wheels respectively, <span class="math inline">\(δ\)</span> is front wheel angle and <span class="math inline">\(θ_{Vf}\)</span> and <span class="math inline">\(θ_{Vr}\)</span> are <strong>velocity deviation angle</strong> of front and rear wheels.</p>
+<div data-align="center">
+<p><img src= "/img/loading.gif" data-lazy-src="https://i.imgur.com/f1tGIac.png" width="60%" /><br></p>
+</div>
+<p>From the image above, we can get the below equations,</p>
+<p><span class="math display">\[
+tan⁡(θ_{Vf})=(V_y+l_f ψ ̇)/V_x  \\
+tan⁡(θ_{Vr})=(V_y−l_r ψ ̇)/V_x 
+\]</span></p>
+<p>In assumption of small angle,</p>
+<p><span class="math display">\[
+θ_{Vf}=(V_y+l_f ψ ̇)/V_x  \\
+θ_{Vr}=(V_y−l_r ψ ̇)/V_x 
+\]</span></p>
+<p>Back to formula (1) and (2), we can get,</p>
+<p><span class="math display">\[
+y ̈=a_y=−\frac{2C_{af}+2C_{ar}}{mV_x}y ̇+ (−V_x−\frac{2C_{af} l_f−2C_{ar} l_r}{mV_x} ψ ̇+ \frac{2C_{af}}{m} δ  (6)  \\
+ψ ̈=−\frac{2l_f C_{af}−2l_r C_{ar}}{I_z V_x}y ̇+ (−\frac{2l_f^2 C_{af}+2l_r^2 C_{ar}}{I_z V_x}) ψ ̇+ \frac{2l_f C_{af}}{I_z}  δ  (7)
+\]</span></p>
+<p>To get the state space expression of vehicle motion, we introduce lateral error <span class="math inline">\(e_1\)</span> and heading angle error <span class="math inline">\(e_2\)</span>. Hence we get the below equations,</p>
+<div data-align="center">
+<p><img src= "/img/loading.gif" data-lazy-src="https://i.imgur.com/0Qm7f1d.png" /><br></p>
+</div>
+<p>In the assumption of uniform motion, a further deduction is,</p>
+<div data-align="center">
+<p><img src= "/img/loading.gif" data-lazy-src="https://i.imgur.com/wikvooY.png" /><br></p>
+</div>
+<p>Similarly,</p>
+<div data-align="center">
+<p><img src= "/img/loading.gif" data-lazy-src="https://i.imgur.com/hqMxWKH.png" /><br></p>
+</div>
+<p>And back to the equations (6) and (7), we can get the equations based on <span class="math inline">\(e_1\)</span> and <span class="math inline">\(e_2\)</span>,</p>
+<div data-align="center">
+<p><img src= "/img/loading.gif" data-lazy-src="https://i.imgur.com/E7lxHPm.png" /><br></p>
+</div>
+<p>Finally, change it to state space expression and we get the vehicle dynamics model expression.</p>
+<div data-align="center">
+<p><img src= "/img/loading.gif" data-lazy-src="https://i.imgur.com/chncUWK.png" /><br></p>
+</div>
+<p>Set</p>
+<div data-align="center">
+<p><img src= "/img/loading.gif" data-lazy-src="https://i.imgur.com/9ysTDUl.png" /><br></p>
+</div>
+<p>The final state expression is</p>
+<p><span class="math display">\[
+\frac{dx}{dt} = Ax + Bu + C
+\]</span></p>
+<p>In this equation, lateral stiffness of front wheel Caf and rear wheel <span class="math inline">\(C_{ar}\)</span>, car quality <span class="math inline">\(m\)</span>, momenta of inertia <span class="math inline">\(I_z\)</span>, distance from front or rear axle to center <span class="math inline">\(l_f\)</span>, <span class="math inline">\(l_r\)</span> are constant.</p>
+<p>Lateral error <span class="math inline">\(e_1\)</span>, heading angle error <span class="math inline">\(e_2\)</span>, longitudinal speed <span class="math inline">\(V_x\)</span> and front wheel angle <span class="math inline">\(δ\)</span> are measurable.</p>
+<p>In this way, the target trajectory can be tracked by the corresponding algorithm using this model by updating the value measured by sensors every calculation cycle.</p>
+<h2 id="discretization">Discretization</h2>
+<p>However, in practical applications, continuous model is not suitable in most cases. Hence we need a discrete model for calculation.</p>
+<p><span class="math display">\[
+x((k+1)T)=A_D x(kT)+B_D u(kT)+C_D
+\]</span></p>
+<p>Where,</p>
+<p><span class="math display">\[
+A_D = \frac{e^{\frac{AT}{2}}}{e^{-\frac{AT}{2}}} = \frac{I + \frac{AT}{2}}{I - \frac{AT}{2}} = (I - \frac{AT}{2})^{-1}(I + \frac{AT}{2})  \\
+B_D = \int_0^T e ^{At}dtB = TB \\ 
+C_D = TC
+\]</span></p>
+<h1 id="references">References</h1>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Linear%E2%80%93quadratic_regulator" target="_blank" rel="noopener">Linera-quadratic regulator</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/72702387" target="_blank" rel="noopener">Apollo控制算法LQR分析（二）</a></li>
+</ul>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Carlos</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://sophistt.github.io/2020/05/02/lqr-controller-theory/">http://sophistt.github.io/2020/05/02/lqr-controller-theory/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/07/18/nargHlvmL9ftBQe.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/05/08/use-snopt-as-ros-service/"><img class="prev-cover" data-lazy-src="https://i.loli.net/2020/07/18/31FN46cDIOujAfz.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Use SNOPT as A ROS Service</div></div></a></div><div class="next-post pull-right"><a href="/2020/04/26/ros-services/"><img class="next-cover" data-lazy-src="https://i.loli.net/2020/07/18/31FN46cDIOujAfz.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">ROS Services</div></div></a></div></nav></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Carlos</div><div class="framework-info"><span>Framework </span><a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  var script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div></div></body></html>
